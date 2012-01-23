@@ -13,3 +13,6 @@ class TestServer(unittest.TestCase):
         response = client.read()
         self.assertTrue(response)
         server.stop()
+
+if __name__ == '__main__':
+    unittest.main()
