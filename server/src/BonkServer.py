@@ -1,0 +1,2 @@
+class BonkServer(object):
+    pass
