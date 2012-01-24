@@ -33,12 +33,12 @@ class BonkServer(object):
         self._server.shutdown()
 
     def write_db(self, value):
-        with open(self.db, 'w') as db:
-            db.write(str(value))
+        with open(self.db, 'wb') as db:
+            db.write(chr(value))
 
     def read_db(self):
-        with open(self.db, 'r') as db:
-            return int(db.read())
+        with open(self.db, 'rb') as db:
+            return ord(db.read())
 
 
 class BonkRequestHandler(SocketServer.BaseRequestHandler):
@@ -52,6 +52,7 @@ class BonkRequestHandler(SocketServer.BaseRequestHandler):
     def handle(self):
         data = self.request.recv(1024)
         if len(data) != 2:
+            #print 'Illegal request: %s\n' % repr(data)
             return
         req, value = data[0], ord(data[1])
         rc, return_value = self._execute_command(req, value)
