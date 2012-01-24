@@ -15,9 +15,9 @@ class BonkCache(object):
         current = self._read_value()
         new_value = self._read_value() + value
         if value < 1:
-            return ('ERROR', 0)
+            return ('ERROR', current)
         if current > 254:
-            return ('ERROR', 0)
+            return ('ERROR', current)
         if new_value > 255:
             new_value = 255
         self._save_value(new_value)
@@ -27,7 +27,7 @@ class BonkCache(object):
         current = self._read_value()
         new_value = current - value
         if new_value < 0:
-            return ('ERROR', 0)
+            return ('ERROR', current)
         self._save_value(new_value)
         return ('OK', new_value)
 
