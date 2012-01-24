@@ -34,10 +34,10 @@ class BonkServer(object):
     def start(self):
         if VERSION == 1:
             return
-        self.write_db(0)
         self._server = BonkServerThreading((self._ip, self._port), BonkRequestHandler)
+        self._server.init_cache(self.db)
         server_thread = threading.Thread(target=self._server.serve_forever, args=(0.1,))
-        server_thread.daemon = False
+        server_thread.daemon = True
         server_thread.start()
 
     def stop(self):
@@ -56,8 +56,6 @@ class BonkServer(object):
 
 class BonkRequestHandler(SocketServer.BaseRequestHandler):
 
-    cache = BonkCache(BonkServer.db)
-
     rc_map = {'OK': BonkServer.OK,
               'ERROR': BonkServer.ERROR,
               'UNKNOWN': BonkServer.UNKNOWN}
@@ -75,11 +73,11 @@ class BonkRequestHandler(SocketServer.BaseRequestHandler):
 
     def _execute_command(self, req, value):
         if req == BonkServer.INCREASE and VERSION > 3:
-            rc, return_value = self.cache.increase(value)
+            rc, return_value = self.server.cache.increase(value)
         elif req == BonkServer.DECREASE and VERSION > 4:
-            rc, return_value = self.cache.decrease(value)
+            rc, return_value = self.server.cache.decrease(value)
         elif req == BonkServer.READ:
-            rc, return_value = self.cache.read(value)
+            rc, return_value = self.server.cache.read(value)
         else:
             rc, return_value = 'UNKNOWN', 0
         return rc, return_value
@@ -87,3 +85,6 @@ class BonkRequestHandler(SocketServer.BaseRequestHandler):
 
 class BonkServerThreading(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     allow_reuse_address = True
+
+    def init_cache(self, db):
+        self.cache = BonkCache(db)

@@ -35,6 +35,10 @@ class TestServer(unittest.TestCase):
         response = self.client.read()
         self.assertEquals(response, BonkServer.ERROR+'\xff')
 
+    def test_unknown_request(self):
+        self.client.send('\xff\x00')
+        response = self.client.read()
+        self.assertEquals(response, BonkServer.UNKNOWN+'\x00')
 
 if __name__ == '__main__':
     unittest.main()
