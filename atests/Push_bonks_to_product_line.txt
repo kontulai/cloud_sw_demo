@@ -6,17 +6,17 @@ Resource          Communication_keywords.txt
 Decrease amount and validate from response
     [Template]    Decrease amount of bonks and check result from server
     # initial amount    decrement    response code    final amount
-    1    1    ${OK}    0
-    0    1    ${ERROR}    0
-    5    20    ${ERROR}    5
-    7    3    ${OK}    4
-    0    0    ${OK}    0
-    20    0    ${OK}    20
+    1                   1            ${OK}            0
+    0                   1            ${ERROR}         0
+    5                   20           ${ERROR}         5
+    7                   3            ${OK}            4
+    0                   0            ${OK}            0
+    20                  0            ${OK}            20
 
-Decrease amount and validata from server
+Decrease amount and validate from server backend
     [Setup]    Create client and connect to bonk server
     Given server has 10 bonks
-    When client sends decrease bonks message with 5 as amount of bonks
-    Then Server should have 5 bonks
-    [Teardown]    Disconnect from bonkserver and delete client
+    When client sends decrease-request with 5 as amount of bonks
+    Then server should have 5 bonks
+    [Teardown]    Disconnect from bonk server and delete client
 

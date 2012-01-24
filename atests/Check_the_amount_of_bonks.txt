@@ -6,12 +6,12 @@ Resource          Communication_keywords.txt
 
 *** Test cases ***
 Server has no bonks
-    Given Server Has 0 bonks
-    When Client sends Get amount of bonks request
-    Then Client receives response with 0 as amount of bonks
+    Given server Has 0 bonks
+    When client sends read-request
+    Then client receives response with 0 as amount of bonks
 
 Server has ten bonks
-    Given Server Has 10 bonks
-    When Client sends Get amount of bonks request
-    Then Client receives response with 10 as amount of bonks
+    Given server Has 10 bonks
+    When client sends read-request
+    Then client receives response with 10 as amount of bonks
 
