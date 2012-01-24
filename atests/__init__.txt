@@ -2,5 +2,5 @@
 Suite Setup       Start bonkserver
 Suite Teardown    Stop bonkserver
 Resource          Communication_keywords.txt
-Resource          Rammbock
+
 
