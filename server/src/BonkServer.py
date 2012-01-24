@@ -7,6 +7,8 @@ from BonkCache import BonkCache
 
 class BonkServer(object):
 
+    ROBOT_LIBRARY_SCOPE = 'GLOBAL'
+
     INCREASE = '\x01'
     DECREASE = '\x02'
     READ = '\x03'
@@ -19,7 +21,7 @@ class BonkServer(object):
 
     def __init__(self, ip, port):
         self._ip = ip
-        self._port = port
+        self._port = int(port)
         self._server = None
 
     def start(self):
@@ -34,7 +36,7 @@ class BonkServer(object):
 
     def write_db(self, value):
         with open(self.db, 'wb') as db:
-            db.write(chr(value))
+            db.write(chr(int(value)))
 
     def read_db(self):
         with open(self.db, 'rb') as db:

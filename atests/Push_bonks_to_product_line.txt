@@ -1,0 +1,16 @@
+*** Settings ***
+Resource        Communication_keywords.txt
+
+*** Test cases ***
+Put bonks to production line
+    [Template]  Decrease amount of bonks and check result from server
+    # initial amount  decrement  response code  final amount
+    1   1   ${OK}       0
+    0   1   ${ERROR}    0
+    5   20  ${ERROR}    5
+    7   3   ${OK}       4
+    0   0   ${OK}       0
+    20  0   ${OK}       20
+
+
+
