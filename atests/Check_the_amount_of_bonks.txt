@@ -1,9 +1,7 @@
 *** Settings ***
 Documentation     As a bonk janitor\nI want to check the amount of bonks\nIn order to know if I need to add more bonks
-Suite Setup       Create client and connect to bonk server
-Suite Teardown    Disconnect from bonkserver and delete client
-Test Setup
-Library           Rammbock
+Test Setup        Create client and connect to bonk server
+Test Teardown     Disconnect from bonkserver and delete client
 Resource          Communication_keywords.txt
 
 *** Test cases ***

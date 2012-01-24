@@ -2,9 +2,7 @@
 Library           Rammbock
 Library           OperatingSystem
 Library           BonkServer    127.0.0.1    55555
-
-*** Variables ***
-${READ AMOUNT MESSAGE CODE}    3
+Resource          message_codes.txt
 
 *** Keywords ***
 Create client and connect to bonk server
@@ -18,21 +16,27 @@ Server Has ${amount} bonks
     write db    ${amount}
 
 Server should have ${amount} bonks
+    Client receives data
     ${server amount}=    read db
-    should be equal    ${server amount}    ${amount}
+    should be equal as strings    ${server amount}    ${amount}
 
 Client sends get amount of bonks request
     Reset Message
     Add Integer As Octets    ${READ AMOUNT MESSAGE CODE}    1
     Add Integer As Octets    0    1
+    client sends data
 
 client sends increase bonks message with ${amount} as amount of bonks
     Reset message
-    Add Integer As Octets    1    1
+    Add Integer As Octets    ${INCREASE AMOUNT MESSAGE CODE}    1
+    Add Integer As Octets    ${amount}    1
+    Client sends data
 
 client sends decrease bonks message with ${amount} as amount of bonks
     Reset message
-    Add Integer As Octets    1    1
+    Add Integer As Octets    ${DECREASE AMOUNT MESSAGE CODE}    1
+    Add Integer As Octets    ${amount}    1
+    Client Sends Data
 
 Client receives response with ${amount} as amount of bonks
     Client Receives Data
@@ -48,13 +52,17 @@ Stop bonkserver
 
 Increase amount of bonks and check result from server
     [Arguments]    ${initial amount}    ${increment}    ${status}    ${final amount}
+    Create client and connect to bonk server
     Given server has ${initial amount} bonks
-    When client sends increase bonks message with ${amount} as amount of bonks
+    When client sends increase bonks message with ${increment} as amount of bonks
     Then client receives response with ${final amount} as amount of bonks
+    [Teardown]    Disconnect from bonkserver and delete client
 
 Decrease amount of bonks and check result from server
     [Arguments]    ${initial amount}    ${decrement}    ${status}    ${final amount}
+    Create client and connect to bonk server
     Given server has ${initial amount} bonks
-    client sends decrease bonks message with ${decrement} as amount of bonks
+    When client sends decrease bonks message with ${decrement} as amount of bonks
     Client receives response with ${final amount} as amount of bonks
+    [Teardown]    Disconnect from bonkserver and delete client
 

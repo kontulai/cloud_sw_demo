@@ -2,8 +2,5 @@
 Suite Setup       Start bonkserver
 Suite Teardown    Stop bonkserver
 Resource          Communication_keywords.txt
-Library           Rammbock
-
-*** Variables ***
-${BONK DB PATH}    ${TEMPDIR}${/}bonk.db
+Resource          Rammbock
 

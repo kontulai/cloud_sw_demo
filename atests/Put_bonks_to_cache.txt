@@ -1,4 +1,5 @@
 *** Settings ***
+Documentation     As a bonk janitor\nI want to add more bonks to cache\nIn order to put more of them to product line later
 Resource          Communication_keywords.txt
 
 *** Test cases ***
@@ -13,7 +14,9 @@ Increase amount and validate from response
     25    0    ${ERROR}    25
 
 Increase amount and validate from server
+    [Setup]    Create client and connect to bonk server
     Given Server Has 10 bonks
-    client sends increase bonks message with 5 as amount of bonks
+    When client sends increase bonks message with 5 as amount of bonks
     Then Server should have 15 bonks
+    [Teardown]    Disconnect from bonkserver and delete client
 
