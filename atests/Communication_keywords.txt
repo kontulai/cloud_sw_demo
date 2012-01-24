@@ -1,6 +1,7 @@
 *** Settings ***
 Library           Rammbock
 Library           OperatingSystem
+Library           BonkServer    127.0.0.1    55555
 
 *** Variables ***
 ${READ AMOUNT MESSAGE CODE}    3
