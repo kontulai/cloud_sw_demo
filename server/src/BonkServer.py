@@ -25,8 +25,8 @@ class BonkServer(object):
     def start(self):
         self.write_db(0)
         self._server = BonkServerThreading((self._ip, self._port), BonkRequestHandler)
-        server_thread = threading.Thread(target=self._server.serve_forever)
-        server_thread.daemon = True
+        server_thread = threading.Thread(target=self._server.serve_forever, args=(0.1,))
+        server_thread.daemon = False
         server_thread.start()
 
     def stop(self):
@@ -71,5 +71,4 @@ class BonkRequestHandler(SocketServer.BaseRequestHandler):
 
 
 class BonkServerThreading(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
-
     allow_reuse_address = True

@@ -1,4 +1,5 @@
 import unittest
+
 from BonkServer import BonkServer
 from Network import TCPClient
 
@@ -33,7 +34,6 @@ class TestServer(unittest.TestCase):
         self.client.send(BonkServer.INCREASE+'\x0f')
         response = self.client.read()
         self.assertEquals(response, BonkServer.ERROR+'\xff')
-
 
 
 if __name__ == '__main__':
