@@ -32,9 +32,9 @@ class BonkCache(object):
         return ('OK', new_value)
 
     def _save_value(self, value):
-        with open(self._db_file, 'w') as db:
-            db.write(str(value))
+        with open(self._db_file, 'wb') as db:
+            db.write(chr(value))
 
     def _read_value(self):
-        with open(self._db_file, 'r') as db:
-            return int(db.read())
+        with open(self._db_file, 'rb') as db:
+            return ord(db.read())

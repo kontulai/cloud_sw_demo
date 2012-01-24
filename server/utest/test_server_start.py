@@ -28,6 +28,13 @@ class TestServer(unittest.TestCase):
         self.server.write_db(5)
         self.assertEquals(self.server.read_db(), 5)
 
+    def test_errors(self):
+        self.server.write_db(255)
+        self.client.send(BonkServer.INCREASE+'\x0f')
+        response = self.client.read()
+        self.assertEquals(response, BonkServer.ERROR+'\xff')
+
+
 
 if __name__ == '__main__':
     unittest.main()
