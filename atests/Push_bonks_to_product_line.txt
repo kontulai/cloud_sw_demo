@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation     As a bonk janitor\nI want to put bonks to production line\nIn order them to bonk
-Resource          Communication_keywords.txt
+Resource          resources/Communication_keywords.txt
 
 *** Test cases ***
 Decrease amount and validate from response

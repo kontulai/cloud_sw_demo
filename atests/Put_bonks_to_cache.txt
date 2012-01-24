@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation     As a bonk janitor\nI want to add more bonks to cache\nIn order to put more of them to product line later
-Resource          Communication_keywords.txt
+Resource          resources/Communication_keywords.txt
 
 *** Test cases ***
 Increase amount and validate from response
