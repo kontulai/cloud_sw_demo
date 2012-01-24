@@ -5,6 +5,13 @@ from os import path
 
 from BonkCache import BonkCache
 
+# 1: Does not listen for connections
+# 2: Responds with 0xffff to all requests
+# 3: Does not support increasing and decreasing
+# 4. Does not support decreasing
+# 5. All works
+VERSION = 5
+
 class BonkServer(object):
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
@@ -25,6 +32,8 @@ class BonkServer(object):
         self._server = None
 
     def start(self):
+        if VERSION == 1:
+            return
         self.write_db(0)
         self._server = BonkServerThreading((self._ip, self._port), BonkRequestHandler)
         server_thread = threading.Thread(target=self._server.serve_forever, args=(0.1,))
@@ -32,6 +41,8 @@ class BonkServer(object):
         server_thread.start()
 
     def stop(self):
+        if VERSION == 1:
+            return
         self._server.shutdown()
 
     def write_db(self, value):
@@ -53,6 +64,8 @@ class BonkRequestHandler(SocketServer.BaseRequestHandler):
 
     def handle(self):
         data = self.request.recv(1024)
+        if VERSION == 2:
+            self.request.send('\xff\xff')
         if len(data) != 2:
             #print 'Illegal request: %s\n' % repr(data)
             return
@@ -61,9 +74,9 @@ class BonkRequestHandler(SocketServer.BaseRequestHandler):
         self.request.send(self.rc_map[rc]+chr(return_value))
 
     def _execute_command(self, req, value):
-        if req == BonkServer.INCREASE:
+        if req == BonkServer.INCREASE and VERSION > 3:
             rc, return_value = self.cache.increase(value)
-        elif req == BonkServer.DECREASE:
+        elif req == BonkServer.DECREASE and VERSION > 4:
             rc, return_value = self.cache.decrease(value)
         elif req == BonkServer.READ:
             rc, return_value = self.cache.read(value)
