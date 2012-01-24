@@ -1,8 +1,9 @@
 *** Settings ***
-Suite Setup       Start bonkserver    127.0.0.1    55555    ${BONK DB PATH}
+Suite Setup       Start bonkserver
 Suite Teardown    Stop bonkserver
 Resource          Communication_keywords.txt
 Library           Rammbock
+Library           BonkServer    127.0.0.1    55555
 
 *** Variables ***
 ${BONK DB PATH}    ${TEMPDIR}${/}bonk.db

@@ -1,21 +1,37 @@
 *** Settings ***
 Library           Rammbock
 Library           OperatingSystem
-Library           server/src/Bonkserver
+
+*** Variables ***
+${READ AMOUNT MESSAGE CODE}    3
 
 *** Keywords ***
-Client sends get amount of bonks request
-    Reset Message
-    Add Integer As Octets    ${READ AMOUNT}    1
-    Add Integer As Octets    0    1
-
 Create client and connect to bonk server
     Create Tcp Client
     Client Connects To Tcp Server    127.0.0.1    55555
 
+Disconnect from bonkserver and delete client
+    Delete Client
+
 Server Has ${amount} bonks
-    Create File    ${BONK DB PATH}
-    Append To File    ${BONK DB PATH}    ${amount}
+    write db    ${amount}
+
+Server should have ${amount} bonks
+    ${server amount}=    read db
+    should be equal    ${server amount}    ${amount}
+
+Client sends get amount of bonks request
+    Reset Message
+    Add Integer As Octets    ${READ AMOUNT MESSAGE CODE}    1
+    Add Integer As Octets    0    1
+
+client sends increase bonks message with ${amount} as amount of bonks
+    Reset message
+    Add Integer As Octets    1    1
+
+client sends decrease bonks message with ${amount} as amount of bonks
+    Reset message
+    Add Integer As Octets    1    1
 
 Client receives response with ${amount} as amount of bonks
     Client Receives Data
@@ -24,12 +40,20 @@ Client receives response with ${amount} as amount of bonks
     Should be equal    ${amount}    ${received amount}
 
 Start bonkserver
-    [Arguments]    ${ip}    ${port}    ${db file}
-    start    ${ip}    ${port}    ${db file}
+    start
 
 Stop bonkserver
+    stop
 
-Server should have ${amount} bonks
-    ${server amount}=    Get File    ${BONK DB PATH}
-    should be equal    ${server amount}    ${amount}
+Increase amount of bonks and check result from server
+    [Arguments]    ${initial amount}    ${increment}    ${status}    ${final amount}
+    Given server has ${initial amount} bonks
+    When client sends increase bonks message with ${amount} as amount of bonks
+    Then client receives response with ${final amount} as amount of bonks
+
+Decrease amount of bonks and check result from server
+    [Arguments]    ${initial amount}    ${decrement}    ${status}    ${final amount}
+    Given server has ${initial amount} bonks
+    client sends decrease bonks message with ${decrement} as amount of bonks
+    Client receives response with ${final amount} as amount of bonks
 

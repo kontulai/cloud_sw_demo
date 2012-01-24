@@ -19,7 +19,7 @@ class BonkServer(object):
 
     def __init__(self, ip, port):
         self._ip = ip
-        self._port = port
+        self._port = int(port)
         self._server = None
 
     def start(self):
