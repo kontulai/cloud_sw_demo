@@ -11,11 +11,11 @@ class TestBonkCache(unittest.TestCase):
         self.cache = BonkCache(self.db)
 
     def test_create_bonk_cache(self):
-        self.assertEquals(self.cache.read(0), ('OK',0))
+        self.assertEquals(self.cache.read(), ('OK',0))
 
     def test_increase(self):
         self.assertEquals(self.cache.increase(1), ('OK',1))
-        self.assertEquals(self.cache.read(0), ('OK',1))
+        self.assertEquals(self.cache.read(), ('OK',1))
 
     def test_decrease(self):
         self.assertEquals(self.cache.increase(1), ('OK',1))
@@ -50,15 +50,11 @@ class TestBonkCache(unittest.TestCase):
 
     def test_read(self):
         self.cache._save_value(0)
-        self.assertEquals(self.cache.read(0), ('OK', 0))
+        self.assertEquals(self.cache.read(), ('OK', 0))
         self.cache._save_value(45)
-        self.assertEquals(self.cache.read(0), ('OK', 45))
+        self.assertEquals(self.cache.read(), ('OK', 45))
         self.cache._save_value(255)
-        self.assertEquals(self.cache.read(0), ('OK', 255))
-
-    def test_read_fails_with_value(self):
-        self.assertRaises(Exception, self.cache.read, 1)
-        self.assertRaises(Exception, self.cache.read, 255)
+        self.assertEquals(self.cache.read(), ('OK', 255))
 
 
 if __name__ == "__main__":

@@ -21,9 +21,12 @@ Server should have ${amount} bonks
     Should be equal as strings    ${server amount}    ${amount}
 
 Client sends read-request
+    Client sends read-request with value 0
+
+Client sends read-request with value ${value}
     Reset Message
     Add Integer As Octets    ${READ AMOUNT MESSAGE CODE}    1
-    Add Integer As Octets    0    1
+    Add Integer As Octets    ${value}    1
     Client sends data
 
 Client sends increase-request with ${amount} as amount of bonks

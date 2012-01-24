@@ -15,3 +15,7 @@ Server has ten bonks
     When client sends read-request
     Then client receives response with 10 as amount of bonks
 
+Read request with value
+    Given server Has 10 bonks
+    When client sends read-request with value 5
+    Then client receives response with 10 as amount of bonks

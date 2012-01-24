@@ -9,8 +9,9 @@ from BonkCache import BonkCache
 # 2: Responds with 0xffff to all requests
 # 3: Does not support increasing and decreasing
 # 4. Does not support decreasing
-# 5. All works
-VERSION = 5
+# 5. Read request with value will cause a crash
+# 6. All works(?)
+VERSION = 6
 
 class BonkServer(object):
 
@@ -61,6 +62,8 @@ class BonkRequestHandler(SocketServer.BaseRequestHandler):
               'UNKNOWN': BonkServer.UNKNOWN}
 
     def handle(self):
+        if self.server.crashed:
+            return
         data = self.request.recv(1024)
         if VERSION == 2:
             self.request.send('\xff\xff')
@@ -77,7 +80,10 @@ class BonkRequestHandler(SocketServer.BaseRequestHandler):
         elif req == BonkServer.DECREASE and VERSION > 4:
             rc, return_value = self.server.cache.decrease(value)
         elif req == BonkServer.READ:
-            rc, return_value = self.server.cache.read(value)
+            if value and VERSION < 6:
+                self.server.crashed = True
+                print 'BONK SERVER CRASH!!!'
+            rc, return_value = self.server.cache.read()
         else:
             rc, return_value = 'UNKNOWN', 0
         return rc, return_value
@@ -88,3 +94,4 @@ class BonkServerThreading(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 
     def init_cache(self, db):
         self.cache = BonkCache(db)
+        self.crashed = False

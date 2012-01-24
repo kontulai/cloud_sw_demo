@@ -6,9 +6,7 @@ class BonkCache(object):
         self._db_file = db_file
         self._save_value(0)
 
-    def read(self, value):
-        if value:
-            raise Exception('BONK SERVER CRASH!')
+    def read(self):
         return ('OK', self._read_value())
 
     def increase(self, value):
