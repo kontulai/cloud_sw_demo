@@ -39,10 +39,14 @@ Client sends decrease-request with ${amount} as amount of bonks
     Client Sends Data
 
 Client receives response with ${amount} as amount of bonks
+    Client receives response with status ${OK} and value ${amount}
+
+Client receives response with status ${status} and value ${amount}
     Client receives data
     ${message code}=    Read Integer From Octets    1
     ${received amount}=    Read Integer From Octets    1
-    Should be equal    ${amount}    ${received amount}
+    Should be equal    ${message code}     ${status}        Wrong response type
+    Should be equal    ${received amount}    ${amount}   Wrong response value
 
 Start bonkserver
     Start
@@ -55,7 +59,7 @@ Increase amount of bonks and check result from server
     Create client and connect to bonk server
     Given server has ${initial amount} bonks
     When client sends increase-request with ${increment} as amount of bonks
-    Then client receives response with ${final amount} as amount of bonks
+    Then client receives response with status ${status} and value ${final amount}
     [Teardown]    Disconnect from bonkserver and delete client
 
 Decrease amount of bonks and check result from server
@@ -63,6 +67,6 @@ Decrease amount of bonks and check result from server
     Create client and connect to bonk server
     Given server has ${initial amount} bonks
     When client sends decrease-request with ${decrement} as amount of bonks
-    Client receives response with ${final amount} as amount of bonks
+    Then client receives response with status ${status} and value ${final amount}
     [Teardown]    Disconnect from bonkserver and delete client
 
