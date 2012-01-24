@@ -1,0 +1,35 @@
+*** Settings ***
+Library           Rammbock
+Library           OperatingSystem
+Library           server/src/Bonkserver
+
+*** Keywords ***
+Client sends get amount of bonks request
+    Reset Message
+    Add Integer As Octets    ${READ AMOUNT}    1
+    Add Integer As Octets    0    1
+
+Create client and connect to bonk server
+    Create Tcp Client
+    Client Connects To Tcp Server    127.0.0.1    55555
+
+Server Has ${amount} bonks
+    Create File    ${BONK DB PATH}
+    Append To File    ${BONK DB PATH}    ${amount}
+
+Client receives response with ${amount} as amount of bonks
+    Client Receives Data
+    ${message code}=    Read Integer From Octets    1
+    ${received amount}=    Read Integer From Octets    1
+    Should be equal    ${amount}    ${received amount}
+
+Start bonkserver
+    [Arguments]    ${ip}    ${port}    ${db file}
+    start    ${ip}    ${port}    ${db file}
+
+Stop bonkserver
+
+Server should have ${amount} bonks
+    ${server amount}=    Get File    ${BONK DB PATH}
+    should be equal    ${server amount}    ${amount}
+

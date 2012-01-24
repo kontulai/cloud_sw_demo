@@ -1,0 +1,17 @@
+*** Settings ***
+Documentation     As a bonk janitor\nI want to check the amount of bonks\nIn order to know if I need to add more bonks
+Suite Setup       Create client and connect to bonk server
+Library           Rammbock
+Resource          Communication_keywords.txt
+
+*** Test cases ***
+Server has no bonks
+    Given Server Has 0 bonks
+    When Client sends Get amount of bonks request
+    Then Client receives response with 0 as amount of bonks
+
+Server has ten bonks
+    Given Server Has 10 bonks
+    When Client sends Get amount of bonks request
+    Then Client receives response with 10 as amount of bonks
+
