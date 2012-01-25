@@ -1,0 +1,94 @@
+*** Settings ***
+Library           Rammbock
+Library           OperatingSystem
+Library           BonkServer    127.0.0.1    55555
+Resource          message_codes.txt
+
+*** Keywords ***
+Client connects to bonk server
+    Create Tcp Client
+    Client connects to tcp server    127.0.0.1    55555
+
+Disconnect from bonkserver and delete client
+    Delete Client
+
+Server Has ${count} bonks
+    Write db    ${count}
+
+Server should have ${count} bonks
+    Client receives data
+    ${server count}=    Read db
+    Should be equal as strings    ${server count}    ${count}
+
+Client sends read-request
+    Client sends read-request with value 0
+
+Client sends read-request with value ${value}
+    Reset Message
+    Add Integer As Octets    ${READ MESSAGE CODE}    1
+    Add Integer As Octets    ${value}    1
+    Client sends data
+
+Client sends increase-request with ${count} as count of bonks
+    Reset message
+    Add Integer As Octets    ${INCREASE MESSAGE CODE}    1
+    Add Integer As Octets    ${count}    1
+    Client sends data
+
+Client sends decrease-request with ${count} as count of bonks
+    Reset message
+    Add Integer As Octets    ${DECREASE MESSAGE CODE}    1
+    Add Integer As Octets    ${count}    1
+    Client Sends Data
+
+Client receives response with ${count} as count of bonks
+    Client receives response with status ${OK} and value ${count}
+
+Client receives response with status ${status} and value ${count}
+    Client receives data
+    ${message code}=    Read Integer From Octets    1
+    ${received count}=    Read Integer From Octets    1
+    Should be equal    ${message code}     ${status}        Wrong response type
+    Should be equal    ${received count}    ${count}   Wrong response value
+
+Client sends request with type ${type}
+    Reset message
+    Add Integer As Octets    ${type}    1
+    Add Integer As Octets    0          1
+    Client Sends Data
+
+Client receives response with 'UNKNOWN'-return code
+    Client receives data
+    ${message code}=    Read Integer From Octets    1
+    ${received count}=    Read Integer From Octets    1
+    Should be equal    ${message code}     ${UNKOWN}        Wrong response type
+
+Start bonkserver
+    Start
+
+Stop bonkserver
+    Stop
+
+Increase count of bonks and check result from server
+    [Arguments]    ${initial count}    ${increment}    ${status}    ${final count}
+    Given client connects to bonk server
+    and server has ${initial count} bonks
+    When client sends increase-request with ${increment} as count of bonks
+    Then client receives response with status ${status} and value ${final count}
+    [Teardown]    Disconnect from bonkserver and delete client
+
+Decrease count of bonks and check result from server
+    [Arguments]    ${initial count}    ${decrement}    ${status}    ${final count}
+    Given client connects to bonk server
+    and server has ${initial count} bonks
+    When client sends decrease-request with ${decrement} as count of bonks
+    Then client receives response with status ${status} and value ${final count}
+    [Teardown]    Disconnect from bonkserver and delete client
+
+Check count of bonks and check result from server
+    [Arguments]   ${initial count}    ${status}    ${final count}
+    Given client connects to bonk server
+    and server has ${initial count} bonks
+    When client sends read-request
+    Then client receives response with status ${status} and value ${final count}
+    [Teardown]    Disconnect from bonkserver and delete client

@@ -1,0 +1,8 @@
+*** Variables ***
+${OK}             1
+${ERROR}          2
+${UNKOWN}         3
+${INCREASE MESSAGE CODE}    1
+${DECREASE MESSAGE CODE}    2
+${READ MESSAGE CODE}    3
+

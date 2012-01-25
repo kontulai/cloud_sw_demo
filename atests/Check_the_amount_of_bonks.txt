@@ -1,5 +1,10 @@
+*** Settings ***
+Documentation     As a bonk janitor\nI want to check the count of bonks\nIn order to know if I need to add more bonks
+Resource          resources/Communication_keywords.txt
+
 *** Test cases ***
 Read number of bonks and validate from response
+    [Template]    Check count of bonks and check result from server
     # initial count    response code    count
     0                  ${OK}            0
     7                  ${OK}            7
