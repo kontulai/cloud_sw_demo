@@ -11,7 +11,7 @@ from BonkCache import BonkCache
 # 4. Does not support decreasing
 # 5. Read request with value will cause a crash
 # 6. All works(?)
-VERSION = 6
+VERSION = 1
 
 class BonkServer(object):
 
