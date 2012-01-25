@@ -1,22 +1,22 @@
 *** Settings ***
 Documentation     As a bonk janitor\nI want to put bonks to production line\nIn order them to bonk
-Resource          Communication_keywords.txt
+Resource          resources/Communication_keywords.txt
 
 *** Test cases ***
 Decrease amount and validate from response
     [Template]    Decrease amount of bonks and check result from server
     # initial amount    decrement    response code    final amount
-    1    1    ${OK}    0
-    0    1    ${ERROR}    0
-    5    20    ${ERROR}    5
-    7    3    ${OK}    4
-    0    0    ${OK}    0
-    20    0    ${OK}    20
+    1                   1            ${OK}            0
+    0                   1            ${ERROR}         0
+    5                   20           ${ERROR}         5
+    7                   3            ${OK}            4
+    0                   0            ${OK}            0
+    20                  0            ${OK}            20
 
-Decrease amount and validata from server
-    [Setup]    Create client and connect to bonk server
+Decrease amount and validate from server backend
+    [Setup]    Client connects to bonk server
     Given server has 10 bonks
-    When client sends decrease bonks message with 5 as amount of bonks
-    Then Server should have 5 bonks
-    [Teardown]    Disconnect from bonkserver and delete client
+    When client sends decrease-request with 5 as amount of bonks
+    Then server should have 5 bonks
+    [Teardown]    Disconnect from bonk server and delete client
 

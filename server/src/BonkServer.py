@@ -5,6 +5,14 @@ from os import path
 
 from BonkCache import BonkCache
 
+# 1: Does not listen for connections
+# 2: Responds with 0xffff to all requests
+# 3: Does not support increasing and decreasing
+# 4. Does not support decreasing
+# 5. Read request with value will cause a crash
+# 6. All works(?)
+VERSION = 6
+
 class BonkServer(object):
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
@@ -25,13 +33,17 @@ class BonkServer(object):
         self._server = None
 
     def start(self):
-        self.write_db(0)
+        if VERSION == 1:
+            return
         self._server = BonkServerThreading((self._ip, self._port), BonkRequestHandler)
+        self._server.init_cache(self.db)
         server_thread = threading.Thread(target=self._server.serve_forever, args=(0.1,))
-        server_thread.daemon = False
+        server_thread.daemon = True
         server_thread.start()
 
     def stop(self):
+        if VERSION == 1:
+            return
         self._server.shutdown()
 
     def write_db(self, value):
@@ -45,14 +57,16 @@ class BonkServer(object):
 
 class BonkRequestHandler(SocketServer.BaseRequestHandler):
 
-    cache = BonkCache(BonkServer.db)
-
     rc_map = {'OK': BonkServer.OK,
               'ERROR': BonkServer.ERROR,
               'UNKNOWN': BonkServer.UNKNOWN}
 
     def handle(self):
+        if self.server.crashed:
+            return
         data = self.request.recv(1024)
+        if VERSION == 2:
+            self.request.send('\xff\xff')
         if len(data) != 2:
             #print 'Illegal request: %s\n' % repr(data)
             return
@@ -61,12 +75,15 @@ class BonkRequestHandler(SocketServer.BaseRequestHandler):
         self.request.send(self.rc_map[rc]+chr(return_value))
 
     def _execute_command(self, req, value):
-        if req == BonkServer.INCREASE:
-            rc, return_value = self.cache.increase(value)
-        elif req == BonkServer.DECREASE:
-            rc, return_value = self.cache.decrease(value)
+        if req == BonkServer.INCREASE and VERSION > 3:
+            rc, return_value = self.server.cache.increase(value)
+        elif req == BonkServer.DECREASE and VERSION > 4:
+            rc, return_value = self.server.cache.decrease(value)
         elif req == BonkServer.READ:
-            rc, return_value = self.cache.read(value)
+            if value and VERSION < 6:
+                self.server.crashed = True
+                print 'BONK SERVER CRASH!!!'
+            rc, return_value = self.server.cache.read()
         else:
             rc, return_value = 'UNKNOWN', 0
         return rc, return_value
@@ -74,3 +91,7 @@ class BonkRequestHandler(SocketServer.BaseRequestHandler):
 
 class BonkServerThreading(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     allow_reuse_address = True
+
+    def init_cache(self, db):
+        self.cache = BonkCache(db)
+        self.crashed = False

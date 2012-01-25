@@ -1,5 +1,4 @@
 *** Settings ***
 Suite Setup       Start bonkserver
 Suite Teardown    Stop bonkserver
-Resource          Communication_keywords.txt
-
+Resource          resources/Communication_keywords.txt
