@@ -51,6 +51,18 @@ Client receives response with status ${status} and value ${count}
     Should be equal    ${message code}     ${status}        Wrong response type
     Should be equal    ${received count}    ${count}   Wrong response value
 
+Client sends request with type ${type}
+    Reset message
+    Add Integer As Octets    ${type}    1
+    Add Integer As Octets    0          1
+    Client Sends Data
+
+Client receives response with 'UNKNOWN'-return code
+    Client receives data
+    ${message code}=    Read Integer From Octets    1
+    ${received count}=    Read Integer From Octets    1
+    Should be equal    ${message code}     ${UNKOWN}        Wrong response type
+
 Start bonkserver
     Start
 
