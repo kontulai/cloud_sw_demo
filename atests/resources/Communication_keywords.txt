@@ -12,44 +12,44 @@ Client connects to bonk server
 Disconnect from bonkserver and delete client
     Delete Client
 
-Server Has ${amount} bonks
-    Write db    ${amount}
+Server Has ${count} bonks
+    Write db    ${count}
 
-Server should have ${amount} bonks
+Server should have ${count} bonks
     Client receives data
-    ${server amount}=    Read db
-    Should be equal as strings    ${server amount}    ${amount}
+    ${server count}=    Read db
+    Should be equal as strings    ${server count}    ${count}
 
 Client sends read-request
     Client sends read-request with value 0
 
 Client sends read-request with value ${value}
     Reset Message
-    Add Integer As Octets    ${READ AMOUNT MESSAGE CODE}    1
+    Add Integer As Octets    ${READ MESSAGE CODE}    1
     Add Integer As Octets    ${value}    1
     Client sends data
 
-Client sends increase-request with ${amount} as amount of bonks
+Client sends increase-request with ${count} as count of bonks
     Reset message
-    Add Integer As Octets    ${INCREASE AMOUNT MESSAGE CODE}    1
-    Add Integer As Octets    ${amount}    1
+    Add Integer As Octets    ${INCREASE MESSAGE CODE}    1
+    Add Integer As Octets    ${count}    1
     Client sends data
 
-Client sends decrease-request with ${amount} as amount of bonks
+Client sends decrease-request with ${count} as count of bonks
     Reset message
-    Add Integer As Octets    ${DECREASE AMOUNT MESSAGE CODE}    1
-    Add Integer As Octets    ${amount}    1
+    Add Integer As Octets    ${DECREASE MESSAGE CODE}    1
+    Add Integer As Octets    ${count}    1
     Client Sends Data
 
-Client receives response with ${amount} as amount of bonks
-    Client receives response with status ${OK} and value ${amount}
+Client receives response with ${count} as count of bonks
+    Client receives response with status ${OK} and value ${count}
 
-Client receives response with status ${status} and value ${amount}
+Client receives response with status ${status} and value ${count}
     Client receives data
     ${message code}=    Read Integer From Octets    1
-    ${received amount}=    Read Integer From Octets    1
+    ${received count}=    Read Integer From Octets    1
     Should be equal    ${message code}     ${status}        Wrong response type
-    Should be equal    ${received amount}    ${amount}   Wrong response value
+    Should be equal    ${received count}    ${count}   Wrong response value
 
 Start bonkserver
     Start
@@ -57,19 +57,26 @@ Start bonkserver
 Stop bonkserver
     Stop
 
-Increase amount of bonks and check result from server
-    [Arguments]    ${initial amount}    ${increment}    ${status}    ${final amount}
+Increase count of bonks and check result from server
+    [Arguments]    ${initial count}    ${increment}    ${status}    ${final count}
     Given client connects to bonk server
-    and server has ${initial amount} bonks
-    When client sends increase-request with ${increment} as amount of bonks
-    Then client receives response with status ${status} and value ${final amount}
+    and server has ${initial count} bonks
+    When client sends increase-request with ${increment} as count of bonks
+    Then client receives response with status ${status} and value ${final count}
     [Teardown]    Disconnect from bonkserver and delete client
 
-Decrease amount of bonks and check result from server
-    [Arguments]    ${initial amount}    ${decrement}    ${status}    ${final amount}
+Decrease count of bonks and check result from server
+    [Arguments]    ${initial count}    ${decrement}    ${status}    ${final count}
     Given client connects to bonk server
-    and server has ${initial amount} bonks
-    When client sends decrease-request with ${decrement} as amount of bonks
-    Then client receives response with status ${status} and value ${final amount}
+    and server has ${initial count} bonks
+    When client sends decrease-request with ${decrement} as count of bonks
+    Then client receives response with status ${status} and value ${final count}
     [Teardown]    Disconnect from bonkserver and delete client
 
+Check count of bonks and check result from server
+    [Arguments]   ${initial count}    ${status}    ${final count}
+    Given client connects to bonk server
+    and server has ${initial count} bonks
+    When client sends read-request
+    Then client receives response with status ${status} and value ${final count}
+    [Teardown]    Disconnect from bonkserver and delete client
