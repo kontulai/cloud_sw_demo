@@ -14,7 +14,7 @@ Decrease amount and validate from response
     20                  0            ${OK}            20
 
 Decrease amount and validate from server backend
-    [Setup]    Create client and connect to bonk server
+    [Setup]    Client connects to bonk server
     Given server has 10 bonks
     When client sends decrease-request with 5 as amount of bonks
     Then server should have 5 bonks
